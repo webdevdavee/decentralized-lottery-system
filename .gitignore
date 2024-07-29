@@ -1,0 +1,10 @@
+node_modules
+.env
+typechain
+
+#Hardhat files
+cache
+gas-report.txt 
+gas-report.txt
+typechain-types
+artifacts
