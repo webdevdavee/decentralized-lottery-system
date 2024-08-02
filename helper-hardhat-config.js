@@ -16,7 +16,8 @@ const networkConfig = {
   },
   11155111: {
     name: "sepolia",
-    subscriptionId: "6926",
+    subscriptionId:
+      "84774416758540979066703983815908538711136983104257995871643585120973330508857",
     gasLane:
       "0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae", // 100 gwei
     keepersUpdateInterval: "30",

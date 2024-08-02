@@ -3,10 +3,7 @@
 pragma solidity ^0.8.24;
 
 import "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
-// In the video, we use the following import statement, but newer versions of the Chainlink
-// contracts have a different file structure.
-// import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus.sol";
 import "@chainlink/contracts/src/v0.8/automation/interfaces/AutomationCompatibleInterface.sol";
 import "hardhat/console.sol";
 
@@ -26,7 +23,7 @@ error Raffle__RaffleNotOpen();
  * @notice This contract is for creating a sample raffle contract
  * @dev This implements the Chainlink VRF Version 2
  */
-contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
+contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
     /* Type declarations */
     enum RaffleState {
         OPEN,
@@ -36,7 +33,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     // Chainlink VRF Variables
 
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
-    uint64 private immutable i_subscriptionId;
+    uint256 private immutable i_subscriptionId;
     bytes32 private immutable i_gasLane;
     uint32 private immutable i_callbackGasLimit;
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
@@ -58,12 +55,12 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     /* Functions */
     constructor(
         address vrfCoordinatorV2,
-        uint64 subscriptionId,
+        uint256 subscriptionId,
         bytes32 gasLane, // keyHash
         uint256 interval,
         uint256 entranceFee,
         uint32 callbackGasLimit
-    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
+    ) VRFConsumerBaseV2Plus(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
         i_interval = interval;
@@ -146,14 +143,8 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
      */
     function fulfillRandomWords(
         uint256,
-        /* requestId */ uint256[] memory randomWords
+        /* requestId */ uint256[] calldata randomWords
     ) internal override {
-        // s_players size 10
-        // randomNumber 202
-        // 202 % 10 ? what's doesn't divide evenly into 202?
-        // 20 * 10 = 200
-        // 2
-        // 202 % 10 = 2
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
         s_recentWinner = recentWinner;
@@ -168,9 +159,6 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         emit WinnerPicked(recentWinner);
     }
 
-    /**
-     * Getter Functions
-     */
     function getRaffleState() public view returns (RaffleState) {
         return s_raffleState;
     }

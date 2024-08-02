@@ -162,12 +162,6 @@ const {
           ).to.be.revertedWith("nonexistent request");
         });
 
-        // This test is too big...
-        // This test simulates users entering the raffle and wraps the entire functionality of the raffle
-        // inside a promise that will resolve if everything is successful.
-        // An event listener for the WinnerPicked is set up
-        // Mocks of chainlink keepers and vrf coordinator are used to kickoff this winnerPicked event
-        // All the assertions are done once the WinnerPicked event is fired
         it("picks a winner, resets, and sends money", async () => {
           const additionalEntrances = 3; // to test
           const startingIndex = 2;
@@ -188,9 +182,7 @@ const {
             raffle.once("WinnerPicked", async () => {
               // event listener for WinnerPicked
               console.log("WinnerPicked event fired!");
-              // assert throws an error if it fails, so we need to wrap
-              // it in a try/catch so that the promise returns event
-              // if it fails.
+
               try {
                 // Now lets get the ending values...
                 const recentWinner = await raffle.getRecentWinner();
